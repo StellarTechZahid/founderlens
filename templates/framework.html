@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Framework | FoundersLens{% endblock %}
+{% block content %}
+<section class="wrap page-head">
+  <h1>The framework</h1>
+  <p class="lede">Every idea is scored on the same 20 evaluation criteria and researched across the same 20 areas. Ten look at Pakistan, ten at the global market.</p>
+</section>
+
+<section class="wrap" style="padding-bottom:clamp(72px,10vw,136px)">
+  <div class="tabs" data-tabs="#fw" role="tablist" aria-label="Framework view">
+    <button type="button" role="tab" data-tab="eval" aria-selected="true">Evaluation criteria</button>
+    <button type="button" role="tab" data-tab="research" aria-selected="false">Research areas</button>
+  </div>
+
+  <div id="fw">
+    <div data-panel="eval">
+      <p class="muted" style="margin-bottom:36px;max-width:40em">Scored from 1 to 10 by the evaluator agent. Each score comes with a short reason.</p>
+      <div class="fw-grid">
+        <div class="fw-col" data-market="pakistan">
+          <h2 class="pk">Pakistan</h2>
+          <ul class="fw-list">{% for p in eval_params.pakistan %}
+            <li><span class="id">{{ p.id }}</span><span class="nm">{{ p.name }}</span><span class="asks">{{ p.asks }}</span></li>{% endfor %}
+          </ul>
+        </div>
+        <div class="fw-col" data-market="global">
+          <h2 class="gl">Global</h2>
+          <ul class="fw-list">{% for p in eval_params.global %}
+            <li><span class="id">{{ p.id }}</span><span class="nm">{{ p.name }}</span><span class="asks">{{ p.asks }}</span></li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div data-panel="research" hidden>
+      <p class="muted" style="margin-bottom:36px;max-width:40em">Written up by the researcher agent as findings, analysis, figures to verify and a confidence level.</p>
+      <div class="fw-grid">
+        <div class="fw-col" data-market="pakistan">
+          <h2 class="pk">Pakistan</h2>
+          <ul class="fw-list">{% for p in research_params.pakistan %}
+            <li><span class="id">{{ p.id }}</span><span class="nm">{{ p.name }}</span><span class="asks">{{ p.asks }}</span></li>{% endfor %}
+          </ul>
+        </div>
+        <div class="fw-col" data-market="global">
+          <h2 class="gl">Global</h2>
+          <ul class="fw-list">{% for p in research_params.global %}
+            <li><span class="id">{{ p.id }}</span><span class="nm">{{ p.name }}</span><span class="asks">{{ p.asks }}</span></li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top:56px"><a class="btn" href="{{ url_for('evaluate') }}">Evaluate your idea</a></p>
+</section>
+{% endblock %}

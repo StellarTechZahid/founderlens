@@ -1,0 +1,24 @@
+{# The score lens: two circles fill up to their market score, the overlap carries the overall score. #}
+{% macro lens(L, pk, gl, overall, uid="l", animate=True) %}
+<svg viewBox="0 0 {{ L.w }} {{ L.h }}" role="img" aria-label="Pakistan {{ pk if pk is not none else 'not scored' }} out of 10, Global {{ gl if gl is not none else 'not scored' }} out of 10, overall {{ overall if overall is not none else 'not scored' }}">
+  <defs>
+    <clipPath id="{{ uid }}-cpk"><circle cx="{{ L.cx1 }}" cy="{{ L.cy }}" r="{{ L.r }}"/></clipPath>
+    <clipPath id="{{ uid }}-cgl"><circle cx="{{ L.cx2 }}" cy="{{ L.cy }}" r="{{ L.r }}"/></clipPath>
+  </defs>
+  <g clip-path="url(#{{ uid }}-cpk)" class="blend">
+    <rect class="{% if animate %}rise{% endif %}" style="--rise: {{ (L.cy + L.r) - L.y_pk + 4 }}px" x="0" y="{{ L.y_pk }}" width="{{ L.w }}" height="{{ L.h }}" fill="#0b8457"/>
+  </g>
+  <g clip-path="url(#{{ uid }}-cgl)" class="blend">
+    <rect class="{% if animate %}rise{% endif %}" style="--rise: {{ (L.cy + L.r) - L.y_gl + 4 }}px" x="0" y="{{ L.y_gl }}" width="{{ L.w }}" height="{{ L.h }}" fill="#2d3cff"/>
+  </g>
+  <circle cx="{{ L.cx1 }}" cy="{{ L.cy }}" r="{{ L.r }}" fill="none" stroke="#000" stroke-width="2"/>
+  <circle cx="{{ L.cx2 }}" cy="{{ L.cy }}" r="{{ L.r }}" fill="none" stroke="#000" stroke-width="2"/>
+  <g clip-path="url(#{{ uid }}-cpk)"><circle cx="{{ L.cx2 }}" cy="{{ L.cy }}" r="{{ L.r }}" fill="none" stroke="#000" stroke-width="5"/></g>
+  <g clip-path="url(#{{ uid }}-cgl)"><circle cx="{{ L.cx1 }}" cy="{{ L.cy }}" r="{{ L.r }}" fill="none" stroke="#000" stroke-width="5"/></g>
+  <circle cx="{{ L.mid }}" cy="{{ L.cy }}" r="46" fill="#fff" stroke="#000" stroke-width="3"/>
+  <text class="lens-num" x="{{ L.mid }}" y="{{ L.cy + 12 }}" text-anchor="middle" font-size="40" fill="#000" data-count="{{ overall if overall is not none else 0 }}" data-decimals="1">{{ '%.1f'|format(overall) if overall is not none else '-' }}</text>
+  <text x="{{ L.mid }}" y="{{ L.cy + 30 }}" text-anchor="middle" font-size="13" font-weight="600" fill="#6b6b6b">overall</text>
+  <text class="lens-cap" x="{{ L.cx1 }}" y="{{ L.cy + L.r + 44 }}" text-anchor="middle" fill="#0b8457">Pakistan {{ '%.1f'|format(pk) if pk is not none else '-' }}</text>
+  <text class="lens-cap" x="{{ L.cx2 }}" y="{{ L.cy + L.r + 44 }}" text-anchor="middle" fill="#2d3cff">Global {{ '%.1f'|format(gl) if gl is not none else '-' }}</text>
+</svg>
+{% endmacro %}

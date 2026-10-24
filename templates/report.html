@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% from "_lens.html" import lens %}
+{% block title %}{{ intake.company_name or 'Report' }} | FoundersLens{% endblock %}
+{% macro f1(x) %}{{ '%.1f'|format(x) if x is not none else '-' }}{% endmacro %}
+
+{% block content %}
+{% if is_sample %}
+<div class="sample-banner"><div class="wrap">
+  <span>This is a sample report for an illustrative idea.</span>
+  <a href="{{ url_for('evaluate') }}">Evaluate your own idea</a>
+</div></div>
+{% endif %}
+
+<div class="wrap">
+  <header class="rep-head">
+    <p class="rep-meta">Report{% if intake.full_name %} for {{ intake.full_name }}{% endif %}{% if intake.stage %}, stage: {{ intake.stage }}{% endif %}{% if result.meta and result.meta.generated_at %}, {{ result.meta.generated_at }}{% endif %}</p>
+    <h1>{{ intake.company_name or 'Your idea' }}</h1>
+  </header>
+
+  <section class="rep-hero">
+    <div class="lens-report">
+      {{ lens(geo, ev.pakistan.score, ev.global.score, ev.overall_score, uid="rep", animate=True) }}
+    </div>
+    <div>
+      <p class="muted" style="margin-bottom:8px">Overall verdict</p>
+      <h2 class="verdict-word">{{ ev.overall_verdict }}</h2>
+      <p class="verdict-rec">{{ ev.recommendation }}</p>
+      <p class="verdict-why">{{ ev.recommendation_reasoning }}</p>
+      <div class="dl-row">
+        <a class="btn" href="{{ url_for('download', job_id=job_id, kind='evaluation') }}">Download evaluation sheet (PDF)</a>
+        <a class="btn ghost" href="{{ url_for('download', job_id=job_id, kind='research') }}">Download research report (PDF)</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="triad" aria-label="Summary">
+    <div><h3>The idea</h3><p>{{ ev.idea_summary }}</p></div>
+    <div><h3 class="pk">Biggest strength</h3><p>{{ ev.biggest_strength }}</p></div>
+    <div><h3 style="color:var(--danger)">Biggest risk</h3><p>{{ ev.biggest_risk }}</p></div>
+  </section>
+
+  {% if ev.missing_items %}
+  <p class="fineprint" style="margin-top:20px">{{ ev.missing_items }} of the 20 criteria were not returned by the AI and are left unscored. The averages use the criteria that were scored.</p>
+  {% endif %}
+
+  <div class="mtabs" role="tablist" data-tabs="#panels" data-hash aria-label="Market">
+    {% for m in markets %}
+    <button type="button" class="mtab" role="tab" data-tab="{{ m }}" data-market="{{ m }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ market_label[m] }}<small>{{ f1(ev[m].score) }} out of 10, {{ ev[m].verdict }}</small></button>
+    {% endfor %}
+  </div>
+
+  <div id="panels">
+    {% for m in markets %}
+    <section class="panel" data-panel="{{ m }}" data-market="{{ m }}" {% if not loop.first %}hidden{% endif %} aria-label="{{ market_label[m] }} market">
+      <p class="panel-sum">{{ ev[m].summary }}</p>
+
+      <h3 class="sub-h">Evaluation, 10 criteria</h3>
+      <p class="sub-p">Open a row to read why it got its score.</p>
+      <div class="crits">
+        {% for c in ev[m].criteria %}
+        <details class="crit">
+          <summary>
+            <span class="id">{{ c.id }}</span>
+            <span class="nm">{{ c.name }}</span>
+            <span class="bar"><i style="--s: {{ c.score or 0 }}"></i></span>
+            <span class="score">{{ c.score if c.score is not none else '-' }}</span>
+          </summary>
+          <div class="why"><span class="rate">{{ c.rating }}</span><br>{{ c.rationale }}</div>
+        </details>
+        {% endfor %}
+      </div>
+
+      <h3 class="sub-h">Research, 10 areas</h3>
+      {% if rs[m].snapshot %}<p class="sub-p" style="max-width:46em;color:var(--text)">{{ rs[m].snapshot }}</p>{% else %}<p class="sub-p">Open an area to read the findings.</p>{% endif %}
+      <div class="rs-list">
+        {% for s in rs[m].sections %}
+        <details class="rs" {% if loop.first %}open{% endif %}>
+          <summary>
+            <span class="id">{{ s.id }}</span>
+            <span class="nm">{{ s.name }}</span>
+            <span class="conf">Confidence <b>{{ s.confidence }}</b></span>
+          </summary>
+          <div class="rs-body">
+            {% if s.findings %}<ul>{% for x in s.findings %}<li>{{ x }}</li>{% endfor %}</ul>{% endif %}
+            {% if s.analysis %}<p class="analysis">{{ s.analysis }}</p>{% endif %}
+            {% if s.data_points %}<div><span class="lab">Figures to verify</span><ul>{% for x in s.data_points %}<li>{{ x }}</li>{% endfor %}</ul></div>{% endif %}
+            {% if s.validate_next %}<div><span class="lab">Verify next</span><ul>{% for x in s.validate_next %}<li>{{ x }}</li>{% endfor %}</ul></div>{% endif %}
+          </div>
+        </details>
+        {% endfor %}
+      </div>
+
+      <div class="two-col" style="margin-top:56px">
+        <div>
+          <h3 class="sub-h" style="margin-top:0">Key risks</h3>
+          <table class="tbl" style="margin-top:14px"><thead><tr><th>Risk</th><th>Mitigation</th></tr></thead><tbody>
+            {% for r in rs[m].key_risks %}<tr><td>{{ r.risk }}</td><td>{{ r.mitigation }}</td></tr>{% else %}<tr><td colspan="2" class="muted">No risks were returned.</td></tr>{% endfor %}
+          </tbody></table>
+        </div>
+        <div>
+          <h3 class="sub-h" style="margin-top:0">Next 90 days</h3>
+          <table class="tbl" style="margin-top:14px"><thead><tr><th>When</th><th>Action</th></tr></thead><tbody>
+            {% for p in rs[m].validation_plan %}<tr><td>{{ p.when }}</td><td>{{ p.action }}</td></tr>{% else %}<tr><td colspan="2" class="muted">No plan was returned.</td></tr>{% endfor %}
+          </tbody></table>
+        </div>
+      </div>
+    </section>
+    {% endfor %}
+  </div>
+
+  {% if ev.priority_actions %}
+  <section style="margin-top:clamp(64px,9vw,120px)">
+    <h2 style="font-size:clamp(2rem,4.4vw,3.6rem);margin-bottom:28px">Do these first.</h2>
+    <ol class="actions-list">{% for a in ev.priority_actions %}<li>{{ a }}</li>{% endfor %}</ol>
+  </section>
+  {% endif %}
+
+  <section style="margin:clamp(56px,8vw,96px) 0 0;padding-bottom:clamp(64px,9vw,120px)">
+    <div class="dl-row" style="margin-bottom:28px">
+      <a class="btn" href="{{ url_for('download', job_id=job_id, kind='evaluation') }}">Download evaluation sheet (PDF)</a>
+      <a class="btn ghost" href="{{ url_for('download', job_id=job_id, kind='research') }}">Download research report (PDF)</a>
+    </div>
+    <p class="fineprint">Scores are AI judgements for guidance. The research is written from the model's own knowledge, not live web data, so figures marked as estimates are reasoned guesses. Verify important claims with customers, price tests and official sources before you decide.</p>
+    <p style="margin-top:22px"><a class="link" href="{{ url_for('evaluate') }}">Evaluate another idea</a></p>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{
+  "_note": "Internal field name -> the exact question from FoundersLens_Intake_Form_Questions.pdf. Used to build the web form and to validate CLI/JSON submissions.",
+  "sections": [
+    {
+      "title": "Basic Identity & Context",
+      "fields": [
+        { "key": "full_name", "label": "What is your name?", "type": "text", "required": true },
+        { "key": "phone_number", "label": "What is your Phone-Number?", "type": "text", "required": true },
+        { "key": "email", "label": "What is your email address?", "type": "email", "required": true },
+        { "key": "company_name", "label": "What name should we use for your company, startup, or project?", "type": "text", "required": true },
+        {
+          "key": "stage",
+          "label": "What best describes your current stage?",
+          "type": "select",
+          "required": true,
+          "options": ["Just an idea in my head", "Have notes & started researching", "Built an MVP", "Already launched and seeking scale"]
+        }
+      ]
+    },
+    {
+      "title": "The Idea, Market & Solution",
+      "fields": [
+        { "key": "core_idea", "label": "In one or two sentences, what is your core idea or business concept?", "type": "textarea", "required": true },
+        { "key": "problem_and_inspiration", "label": "What exact problem are you trying to solve, and what inspired you to solve it?", "type": "textarea", "required": true },
+        { "key": "target_audience", "label": "Who is your exact target audience, and what is their biggest pain point?", "type": "textarea", "required": true },
+        { "key": "current_alternatives", "label": "What are they currently doing to solve this problem? (current alternative)", "type": "textarea", "required": true },
+        { "key": "competitors_and_edge", "label": "Who are your main competitors, and what makes your solution better, sharper, or more unique?", "type": "textarea", "required": true },
+        { "key": "ideal_outcome", "label": "If this works perfectly, what does the ideal version of your product or service look like?", "type": "textarea", "required": true }
+      ]
+    },
+    {
+      "title": "Progress & Challenges",
+      "fields": [
+        {
+          "key": "progress_so_far",
+          "label": "What concrete steps or progress have you already made on this idea so far?",
+          "type": "checkbox_group",
+          "required": true,
+          "options": ["Online research", "Market research", "Talked to market expert", "Talked to potential customers", "Built a prototype", "Nothing yet"]
+        },
+        { "key": "links_notes_documents", "label": "Please share any links, notes, documents, or wireframes you already have.", "type": "textarea", "required": false },
+        { "key": "clarity_vs_fuzzy", "label": "What part of this idea is already crystal clear to you, and what part still feels fuzzy or uncertain?", "type": "textarea", "required": true },
+        { "key": "biggest_bottleneck", "label": "What is the single biggest bottleneck currently holding you back?", "type": "textarea", "required": true }
+      ]
+    },
+    {
+      "title": "Logistics, Strategy & Commitment",
+      "fields": [
+        {
+          "key": "team_situation",
+          "label": "Do you already have a team/technical support, or are you starting solo?",
+          "type": "select",
+          "required": true,
+          "options": ["Solo Founder (Non-Technical)", "Solo Founder (Technical)", "Have a Co-founder/Team", "Planning to hire team members/agency"]
+        },
+        { "key": "budget", "label": "What is your realistic budget range for bringing the first version of this project to life?", "type": "text", "required": true },
+        {
+          "key": "launch_timeline",
+          "label": "What is your ideal launch window or deadline for this phase?",
+          "type": "select",
+          "required": true,
+          "options": ["ASAP (Under 30 days)", "1-3 Months", "3-6 Months", "No strict timeline"]
+        },
+        {
+          "key": "needs_most",
+          "label": "What do you critically need most from us right now?",
+          "type": "checkbox_group",
+          "required": true,
+          "options": ["Complete Actionable Roadmap", "Tech Stack Recommendations", "Competitor Analysis", "Marketing Strategy", "Proper Working Model of your business"]
+        },
+        { "key": "winning_outcome", "label": "If this consultation goes perfectly, what does a winning outcome and ultimate success look like for you?", "type": "textarea", "required": true },
+        {
+          "key": "ambition_level",
+          "label": "Where do you see this business scaled in the next 1 to 3 years?",
+          "type": "select",
+          "required": true,
+          "options": ["Lifestyle side-hustle", "6-figure solo business", "6-figure business with an agency", "Multi-million dollar startup", "Acquisition/Exit"]
+        },
+        { "key": "other_context", "label": "Is there anything else about your vision, fears, constraints, or goals that we should know?", "type": "textarea", "required": true }
+      ]
+    }
+  ]
+}

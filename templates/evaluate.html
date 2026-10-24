@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Evaluate your idea | FoundersLens{% endblock %}
+{% block content %}
+{% set titles = ["About you", "Your idea", "Where you are", "Your plan"] %}
+{% set subs = ["So we know who the report is for.", "The problem, the customer and what you offer.", "What you have done and what is holding you back.", "Team, money, time and ambition."] %}
+{% set placeholders = {
+  "full_name": "Your full name",
+  "phone_number": "+92 300 1234567",
+  "email": "you@example.com",
+  "company_name": "The name to print on your report",
+  "core_idea": "One or two sentences is enough.",
+  "budget": "For example PKR 500,000 to 1,000,000"
+} %}
+
+<div class="wrap">
+  <form class="wizard" id="intake" novalidate autocomplete="on">
+    <div class="wiz-top">
+      <span class="wiz-count" id="wizCount">Step 1 of {{ schema.sections|length }}</span>
+      <span>
+        <button type="button" class="example-btn" id="exampleBtn">Fill with an example</button>
+      </span>
+    </div>
+    <div class="segments" aria-hidden="true">{% for s in schema.sections %}<i></i>{% endfor %}</div>
+
+    {% for section in schema.sections %}
+    {% set si = loop.index0 %}
+    <fieldset class="step" data-step="{{ si }}" style="border:0;padding:0;margin:0;min-width:0" {% if si != 0 %}hidden{% endif %}>
+      <legend style="padding:0;width:100%">
+        <h2>{{ titles[si] }}</h2>
+        <p class="step-sub">{{ subs[si] }}</p>
+      </legend>
+
+      {% for f in section.fields %}
+      <div class="field" data-key="{{ f.key }}" data-type="{{ f.type }}" {% if f.required %}data-required="1"{% endif %}>
+        <label class="q" {% if f.type in ['text','email','textarea'] %}for="f-{{ f.key }}"{% endif %} id="q-{{ f.key }}">{{ f.label }}{% if not f.required %}<span class="opt">optional</span>{% endif %}</label>
+
+        {% if f.type in ['text', 'email'] %}
+          <input id="f-{{ f.key }}" name="{{ f.key }}" type="{{ 'tel' if f.key == 'phone_number' else f.type }}" placeholder="{{ placeholders.get(f.key, '') }}" {% if f.required %}required{% endif %} autocomplete="{{ {'full_name':'name','email':'email','phone_number':'tel','company_name':'organization'}.get(f.key, 'off') }}">
+        {% elif f.type == 'textarea' %}
+          <textarea id="f-{{ f.key }}" name="{{ f.key }}" placeholder="{{ placeholders.get(f.key, '') }}" {% if f.required %}required{% endif %}></textarea>
+        {% elif f.type == 'select' %}
+          <div class="chips" role="radiogroup" aria-labelledby="q-{{ f.key }}">
+            {% for o in f.options %}<label class="chip"><input type="radio" name="{{ f.key }}" value="{{ o }}"><span>{{ o }}</span></label>{% endfor %}
+          </div>
+        {% elif f.type == 'checkbox_group' %}
+          <p class="hint">Choose all that apply.</p>
+          <div class="chips" role="group" aria-labelledby="q-{{ f.key }}">
+            {% for o in f.options %}<label class="chip"><input type="checkbox" name="{{ f.key }}" value="{{ o }}"><span>{{ o }}</span></label>{% endfor %}
+          </div>
+        {% endif %}
+        <p class="err" role="alert"></p>
+      </div>
+      {% endfor %}
+    </fieldset>
+    {% endfor %}
+
+    <div class="form-error" id="formError" hidden></div>
+
+    <div class="wiz-actions">
+      <button type="button" class="back-btn" id="backBtn" hidden>Back</button>
+      <button type="button" class="btn" id="nextBtn">Continue</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>window.FL_EXAMPLE = {{ example|tojson }};</script>
+<script src="{{ url_for('static', filename='js/evaluate.js') }}"></script>
+{% endblock %}

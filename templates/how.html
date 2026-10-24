@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}How it works | FoundersLens{% endblock %}
+{% block content %}
+<section class="wrap page-head">
+  <h1>How it works</h1>
+  <p class="lede">FoundersLens is a pipeline of two AI agents, built as a multi-agent workflow on DNotifier. Here is what happens between your answers and your PDFs.</p>
+</section>
+
+<section class="wrap" style="padding-bottom:clamp(40px,6vw,72px)">
+  <div class="pipeline">
+    <div class="node"><h3>Intake form</h3><p>{{ question_count }} answers about your idea, saved on the server.</p></div>
+    <div class="node a"><h3>Evaluator agent</h3><p>One AI call scores 20 criteria from 1 to 10 and explains each score.</p></div>
+    <div class="node b"><h3>Research agent</h3><p>Four AI calls run in parallel and research 20 areas, flagging every estimate.</p></div>
+    <div class="node"><h3>Score engine and PDFs</h3><p>Code rebuilds the full structure, does the maths, and writes both PDFs.</p></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="prose-block">
+    <h2>Agent one scores</h2>
+    <div class="body">
+      <p>The evaluator reads your answers and rates your idea on ten Pakistan criteria and ten global criteria. It is told to be sceptical, to use the whole 1 to 10 range, and to score cautiously when your answers give no evidence.</p>
+      <p>Your name, phone number and email are not part of what it reads.</p>
+    </div>
+  </div>
+  <div class="prose-block">
+    <h2>Agent two researches</h2>
+    <div class="body">
+      <p>The researcher takes your idea and the evaluator's verdict, then writes up 20 research areas. To keep every reply short enough to finish cleanly, the work is split into four parallel calls: Pakistan areas 1 to 5 and 6 to 10, global areas 1 to 5 and 6 to 10.</p>
+      <p>Each area gets findings, a short analysis, figures to verify and a confidence level. Each market also gets key risks and a 90-day validation plan.</p>
+    </div>
+  </div>
+  <div class="prose-block">
+    <h2>The maths is done in code</h2>
+    <div class="body">
+      <p>AI is good at judgement and weak at arithmetic, so it only supplies the 1 to 10 scores and reasons. The software clamps every score to the valid range, averages ten criteria into a market score, averages the two markets into the overall score, and picks the verdict band.</p>
+      <table class="bands">
+        <tr><td>8 and above</td><td>Strong</td></tr>
+        <tr><td>6.5 to 7.9</td><td>Promising</td></tr>
+        <tr><td>5 to 6.4</td><td>Needs validation</td></tr>
+        <tr><td>3.5 to 4.9</td><td>High risk</td></tr>
+        <tr><td>Below 3.5</td><td>Weak</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="prose-block">
+    <h2>Every run can be traced</h2>
+    <div class="body">
+      <p>The pipeline is one DNotifier workflow with observability switched on. Each run gets an execution id, and the DNotifier dashboard shows every step with its input and output, which makes a surprising score easy to investigate.</p>
+    </div>
+  </div>
+  <div class="prose-block">
+    <h2>What it cannot do</h2>
+    <div class="body">
+      <p>The agents do not browse the web. They write from their own knowledge, so figures are labelled as estimates and can be out of date. Scores are judgements for guidance, not verified market data.</p>
+      <p>Use the reports to decide what to test next, then check the important claims with customers, price tests and official sources.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section cta" style="padding-top:clamp(48px,6vw,80px)">
+  <div class="wrap">
+    <h2>See it on a real idea.</h2>
+    <div class="hero-actions">
+      <a class="btn" href="{{ url_for('sample') }}">Open the sample report</a>
+      <a class="link" href="{{ url_for('evaluate') }}">Evaluate your own idea</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}FoundersLens{% endblock %}</title>
+  <meta name="description" content="{% block desc %}Score your startup idea in Pakistan and the global market. Two AI agents evaluate 20 criteria, research 20 areas, and give you two PDFs.{% endblock %}">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+  <link rel="preload" href="{{ url_for('static', filename='fonts/BricolageGrotesque.ttf') }}" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>document.documentElement.className = "js";</script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav" id="nav">
+    <div class="wrap">
+      <a class="brand" href="{{ url_for('home') }}" aria-label="FoundersLens home">
+        <svg class="mark" viewBox="0 0 34 22" aria-hidden="true">
+          <circle cx="11" cy="11" r="11" fill="#0b8457" style="mix-blend-mode:multiply"/>
+          <circle cx="23" cy="11" r="11" fill="#2d3cff" style="mix-blend-mode:multiply"/>
+        </svg>
+        FoundersLens
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span></button>
+      <nav class="nav-links" id="navLinks" aria-label="Main">
+        <a href="{{ url_for('framework_page') }}" {% if page == 'framework' %}aria-current="page"{% endif %}>Framework</a>
+        <a href="{{ url_for('how_it_works') }}" {% if page == 'how' %}aria-current="page"{% endif %}>How it works</a>
+        <a href="{{ url_for('sample') }}" {% if page == 'sample' %}aria-current="page"{% endif %}>Sample report</a>
+        <a class="btn" href="{{ url_for('evaluate') }}">Evaluate your idea</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>
+        <a class="brand" href="{{ url_for('home') }}">
+          <svg class="mark" viewBox="0 0 34 22" aria-hidden="true">
+            <circle cx="11" cy="11" r="11" fill="#0b8457" style="mix-blend-mode:multiply"/>
+            <circle cx="23" cy="11" r="11" fill="#2d3cff" style="mix-blend-mode:multiply"/>
+          </svg>
+          FoundersLens
+        </a>
+        <p style="margin-top:14px">Scores are AI judgements for guidance, not verified market data. Check every important claim with real customers and sources before you decide.</p>
+      </div>
+      <ul>
+        <li><a href="{{ url_for('evaluate') }}">Evaluate your idea</a></li>
+        <li><a href="{{ url_for('sample') }}">Sample report</a></li>
+        <li><a href="{{ url_for('framework_page') }}">Framework</a></li>
+        <li><a href="{{ url_for('how_it_works') }}">How it works</a></li>
+      </ul>
+      <p>Two AI agents running as a workflow on DNotifier.</p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

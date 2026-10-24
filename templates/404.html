@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Page not found | FoundersLens{% endblock %}
+{% block content %}
+<section class="wrap nf">
+  <h1>This page does not exist.</h1>
+  <p class="lede" style="margin-bottom:32px">The link may be wrong, or a report may have been removed. Head back to the start.</p>
+  <a class="btn" href="{{ url_for('home') }}">Go to the home page</a>
+</section>
+{% endblock %}

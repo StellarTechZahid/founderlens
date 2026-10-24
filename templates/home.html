@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% from "_lens.html" import lens %}
+{% block title %}FoundersLens | Will your idea work in Pakistan and beyond?{% endblock %}
+{% block content %}
+
+<section class="wrap hero">
+  <div>
+    <h1>Will your idea work in Pakistan and beyond?</h1>
+    <p class="lede">Answer {{ question_count }} questions about your startup idea. Two AI agents score it on 20 criteria across both markets, research every one, and hand you two PDFs.</p>
+    <div class="hero-actions">
+      <a class="btn" href="{{ url_for('evaluate') }}">Evaluate your idea</a>
+      <a class="link" href="{{ url_for('sample') }}">See a sample report</a>
+    </div>
+    <p class="hero-note">About 10 minutes to answer. The agents take 1 to 3 minutes.</p>
+  </div>
+
+  <div>
+    <div class="lens-hero" id="heroLens">
+      <svg viewBox="0 0 600 540" role="img" aria-label="Two overlapping circles: the Pakistan market and the global market. Your idea sits where they overlap.">
+        <circle class="blend" id="hl-pk" cx="195" cy="250" r="185" fill="#0b8457"/>
+        <circle class="blend" id="hl-gl" cx="405" cy="250" r="185" fill="#2d3cff"/>
+        <path id="hl-lens" d="" fill="none" stroke="#000" stroke-width="3.5"/>
+        <text id="hl-idea" class="lens-idea" x="300" y="258" text-anchor="middle">Your idea</text>
+        <text id="hl-lab-pk" class="lens-label" x="195" y="498" text-anchor="middle" fill="#0b8457">Pakistan</text>
+        <text id="hl-lab-gl" class="lens-label" x="405" y="498" text-anchor="middle" fill="#2d3cff">Global</text>
+      </svg>
+    </div>
+    <p class="lens-hint">Move your cursor. The more the two markets overlap, the further your idea travels.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="section" id="markets">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Two markets.<br>Twenty criteria.</h2>
+      <p class="lede">An idea that thrives in Lahore can fail in Lisbon, and the other way round. FoundersLens judges both markets on ten criteria each, so you see exactly where your idea is strong and where it is exposed.</p>
+    </div>
+    <div class="markets">
+      <div class="market-col">
+        <h3 class="pk">Pakistan</h3>
+        <p class="count">Ten criteria for the local market</p>
+        <ul>{% for p in eval_params.pakistan %}<li>{{ p.name }}</li>{% endfor %}</ul>
+      </div>
+      <div class="market-col">
+        <h3 class="gl">Global</h3>
+        <p class="count">Ten criteria for international markets</p>
+        <ul>{% for p in eval_params.global %}<li>{{ p.name }}</li>{% endfor %}</ul>
+      </div>
+    </div>
+    <p style="margin-top:36px"><a class="link" href="{{ url_for('framework_page') }}">Read what each criterion asks</a></p>
+  </div>
+</section>
+
+<section class="section wash" id="steps">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>From your answers to a decision in four steps.</h2>
+    </div>
+    <ol class="steps">
+      <li><span class="n">1</span><h3>Describe your idea</h3><p>Answer {{ question_count }} questions about the problem, your customer, your progress and your limits.</p></li>
+      <li><span class="n">2</span><h3>The evaluator scores it</h3><p>Agent one rates all 20 criteria from 1 to 10 and gives the reason for every score.</p></li>
+      <li><span class="n">3</span><h3>The researcher digs in</h3><p>Agent two researches 20 areas at the same time, marks every estimate, and says what to verify.</p></li>
+      <li><span class="n">4</span><h3>Download two PDFs</h3><p>An evaluation sheet with your verdict, and a research report with risks and a 90-day plan.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" id="sample">
+  <div class="wrap teaser">
+    <div>
+      <h2>See a finished report first.</h2>
+      <p class="lede">We ran a farm-to-grocer marketplace idea through the same pipeline. Open the report, expand any criterion, and download both PDFs.</p>
+      <a class="btn" href="{{ url_for('sample') }}">Open the sample report</a>
+    </div>
+    <div class="lens-static">
+      {{ lens(sample_lens, sample_ev.pakistan.score, sample_ev.global.score, sample_ev.overall_score, uid="home", animate=False) }}
+    </div>
+  </div>
+</section>
+
+<section class="section tight" id="faq">
+  <div class="wrap">
+    <div class="sec-head"><h2>Questions people ask.</h2></div>
+    <div class="faq">
+      <details>
+        <summary>Does the research use live web data?</summary>
+        <div class="answer">No. The agents write from their own knowledge, so every figure is an estimate and is labelled that way. Each research area ends with what to verify next, using customer interviews, price tests and official sources.</div>
+      </details>
+      <details>
+        <summary>How is the score calculated?</summary>
+        <div class="answer">The AI rates each criterion from 1 to 10. The software, not the AI, does the maths: ten criteria make a market score, and the two market scores make the overall score. That keeps the numbers consistent.</div>
+      </details>
+      <details>
+        <summary>What happens to my answers?</summary>
+        <div class="answer">They are stored on the server running this site, only to build your report. Your name, phone number and email are never sent to the AI.</div>
+      </details>
+      <details>
+        <summary>Which AI runs this?</summary>
+        <div class="answer">The two agents run as a workflow on DNotifier, using the OpenAI model connected to the DNotifier app (GPT-4o by default). Every run can be inspected step by step in the DNotifier dashboard.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="section cta">
+  <div class="wrap">
+    <h2>Find out how far your idea travels.</h2>
+    <a class="btn" href="{{ url_for('evaluate') }}">Evaluate your idea</a>
+  </div>
+</section>
+
+{% endblock %}

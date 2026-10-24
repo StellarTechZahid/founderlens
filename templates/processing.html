@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Running your evaluation | FoundersLens{% endblock %}
+{% block content %}
+<div class="wrap">
+  <section class="process" id="proc" data-job="{{ job_id }}">
+    <div class="lens-run" aria-hidden="true">
+      <svg viewBox="0 0 400 240">
+        <circle class="c1" cx="150" cy="120" r="100" fill="#0b8457" style="mix-blend-mode:multiply"/>
+        <circle class="c2" cx="250" cy="120" r="100" fill="#2d3cff" style="mix-blend-mode:multiply"/>
+      </svg>
+    </div>
+
+    <h1 id="procTitle">Evaluating your idea</h1>
+    <p class="lede" id="procSub">Two agents are at work. Keep this page open, or come back to this link later.</p>
+
+    <ol class="stages" id="stages">
+      <li class="stage done" data-stage="intake"><span class="dot"></span><span>Read your answers</span><span class="meta"></span></li>
+      <li class="stage" data-stage="evaluating"><span class="dot"></span><span>Score 20 criteria</span><span class="meta"></span></li>
+      <li class="stage" data-stage="researching"><span class="dot"></span><span>Research 20 areas</span><span class="meta" id="resMeta"></span></li>
+      <li class="stage" data-stage="pdf"><span class="dot"></span><span>Build your two PDFs</span><span class="meta"></span></li>
+    </ol>
+
+    <p class="note" id="elapsed">Elapsed 0:00. This usually takes 1 to 3 minutes.</p>
+
+    <div class="fail" id="fail" hidden>
+      <h3>The evaluation stopped</h3>
+      <p id="failMsg"></p>
+      <details><summary>Technical details</summary><pre id="failDetail"></pre></details>
+      <div class="row">
+        <a class="btn" href="{{ url_for('evaluate') }}">Back to the form</a>
+        <a class="btn ghost" href="{{ url_for('home') }}">Home</a>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var root = document.getElementById("proc"), job = root.getAttribute("data-job");
+  var order = ["intake", "evaluating", "researching", "pdf", "done"];
+  var rows = {}; document.querySelectorAll(".stage").forEach(function (r) { rows[r.getAttribute("data-stage")] = r; });
+  var timer = null;
+
+  function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
+  function paint(stage) {
+    var idx = order.indexOf(stage); if (stage === "queued") idx = 1;
+    Object.keys(rows).forEach(function (k) {
+      var i = order.indexOf(k);
+      rows[k].classList.toggle("done", i < idx);
+      rows[k].classList.toggle("active", i === idx);
+    });
+  }
+  function poll() {
+    fetch("/api/status/" + job, { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("gone"); return r.json(); })
+      .then(function (s) {
+        document.getElementById("elapsed").textContent = "Elapsed " + fmt(s.elapsed || 0) + ". This usually takes 1 to 3 minutes.";
+        if (s.status === "done") { paint("done"); Object.keys(rows).forEach(function (k) { rows[k].classList.add("done"); rows[k].classList.remove("active"); });
+          document.getElementById("procTitle").textContent = "Your report is ready"; window.location.replace("/report/" + job); return; }
+        if (s.status === "error") {
+          clearTimeout(timer);
+          document.getElementById("procTitle").textContent = "Something went wrong";
+          document.getElementById("procSub").textContent = "";
+          document.getElementById("failMsg").textContent = s.error || "The evaluation could not be completed.";
+          document.getElementById("failDetail").textContent = s.detail || "";
+          document.getElementById("fail").hidden = false;
+          Object.keys(rows).forEach(function (k) { rows[k].classList.remove("active"); });
+          return;
+        }
+        paint(s.stage || "evaluating");
+        var meta = document.getElementById("resMeta");
+        meta.textContent = (s.stage === "researching") ? ((s.research_done || 0) + " of " + (s.research_total || 4) + " parts done") : "";
+        timer = setTimeout(poll, 2000);
+      })
+      .catch(function () { timer = setTimeout(poll, 4000); });
+  }
+  paint("evaluating"); poll();
+})();
+</script>
+{% endblock %}
